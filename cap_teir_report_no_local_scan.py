@@ -3,11 +3,13 @@ import xmltodict
 import json
 import boto3
 from tqdm import tqdm
-from collections import Counter
 from process_vbm import process_vbm, save_text
 import itertools
 from functools import reduce
 import pprint
+
+# The version pulls in the data from the resulting json data from the localData.ps1 script supplied.
+
 
 # set dictionaries
 
@@ -16,35 +18,21 @@ cloud_vbm = []
 local_results = []
 cloud_results = []
 
-
-# scan filesystem for vbm files
-
+# Import the localData file from json file
 print('Running')
 
-print('Scanning file system')
-for dirpath, dirs, files in os.walk("f:/"):  
-            for filename in files:
-                        fname = os.path.join(dirpath,filename)
-                        if "vbm" in fname:
-                            local_vbm.append(fname)
-print('Finished')
-print("")
+print('Importing JSON Data')
 
-with open('local_vbm.txt', 'w') as local_vbm_data:
-    local_vbm_data.write(str(local_vbm))
+with open('local_data.json', 'r', encoding="utf-16") as json_data:
+    local_data_temp = json.load(json_data)
 
-# for each vbm, open and process the result
+# Need to filter out stuff not needed
 
-print('Processing local vbm')
-for item in local_vbm:
-    with open(item, 'r') as file_data:
-        dict_file = xmltodict.parse(file_data.read())
-    results_data = process_vbm(dict_file)
-    local_results.append(results_data)
+filter_data = ['VMware Backup', 'Windows Agent Backup', 'Linux Agent Backup']
 
-print('Finished')
-print("")
-# scaen the cloud repo for vbm files
+local_results = [x for x in local_data_temp if x['Type'] in filter_data]
+
+# scan the cloud repo for vbm files
 
 print('Scanning cloud')
 s3_client = boto3.client('s3')
@@ -98,7 +86,7 @@ for job in cloud_jobs:
     j = list(filter(lambda x: x['Job'] == job, cloud_results))
 
     # calculate the new total capacity
-    new_cap = reduce((lambda x, y: x + y), [x['TotalBackupSizeGB'] for x in j])
+    new_cap = reduce((lambda x, y: x + y), [x['TotalBackupSizeMB'] for x in j])
 
     # Create new list of lists with the backups files
     all_files_list = [x['Files'] for x in j]
@@ -112,7 +100,7 @@ for job in cloud_jobs:
     new_data = {
         "Job": job,
         "Points": point_qty[0],
-        "TotalBackupSizeGB": new_cap,
+        "TotalBackupSizeMB": new_cap,
         "Files": flat_list
     }
     updated_cloud_results.append(new_data)
@@ -121,9 +109,6 @@ for job in cloud_jobs:
 print("Finished")
 print("")
 # short term create two json files, one for local and the other for remote
-
-with open('local_results.json', 'w') as json_file:
-    json.dump(local_results, json_file)
 
 with open('cloud_results.json', 'w') as json_file:
     json.dump(updated_cloud_results, json_file) # change
@@ -136,7 +121,7 @@ for i in local_results:
         if i['Job'] == j['Job']:
             job = i['Job']
             point_diff = j['Points'] - i['Points'] 
-            cap_diff = j['TotalBackupSizeGB'] - i['TotalBackupSizeGB']
+            cap_diff = j['TotalBackupSizeMB'] - i['TotalBackupSizeMB']
             points_text = f"Points difference {point_diff}"
             cap_text = f"Cloud capacity difference {cap_diff}"
             # print(i['Job'])

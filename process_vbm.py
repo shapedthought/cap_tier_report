@@ -32,7 +32,7 @@ def process_vbm(dict_file):
         "Job": job,
         # "Points": storage_qty,
         "Points": point_qty,
-        "TotalBackupSizeGB": total_cap,
+        "TotalBackupSizeMB": total_cap,
         "Files": file_paths
     }
     return return_obj

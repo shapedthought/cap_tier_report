@@ -10,7 +10,7 @@ foreach ($backup in $backups) {
     $TotalBackupSizeGB = 0
     $files = @()
     foreach ($item in $storages) {
-        $TotalBackupSizeGB += $item.Stats.BackupSize / 1GB
+        $TotalBackupSizeGB += $item.Stats.BackupSize / 1MB
         if ([string]$item.FilePath -like "*\\*") {
             $bu_only = $item.FilePath.ToString().Split('\\')[-1]
             $files += $bu_only
@@ -25,6 +25,7 @@ foreach ($backup in $backups) {
 
     }
     $Job = $backup.JobName
+    $Type = $backup.TypeToString
     $allPoints = 0
     $Points = ($backup.GetPoints()).length
     foreach ($point in $Points) {
@@ -33,8 +34,9 @@ foreach ($backup in $backups) {
     if ($allPoints -gt 0) {
         $object = [PSCustomObject]@{
             Job               = $Job
+            Type              = $Type
             Points            = $allPoints
-            TotalBackupSizeGB = $TotalBackupSizeGB
+            TotalBackupSizMB = $TotalBackupSizeMB
             Files             = $files
         }
         $results += $object
@@ -43,5 +45,5 @@ foreach ($backup in $backups) {
 
 }
 
-$results | ConvertTo-Json | Out-File -FilePath .\test_data.json
+$results | ConvertTo-Json | Out-File -FilePath .\local_data.json
 

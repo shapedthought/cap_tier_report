@@ -2,7 +2,7 @@
 
 Experimental tool that provides a report on the differences in restore point quantities between on-premises and cloud with Veeam Capacity Tier. 
 
-It achives this by scanning the local Veeam vbm files (metadata) and comparing them with cloud versions of the same files.
+It achives this by ether scanning the local repository for vbm files or you can use a PowerShell script to get the same info, then comparing that data against vbm files pulled from AWS.
 
 It is currently designed to be used with copy-only mode. 
 
@@ -26,6 +26,23 @@ The Analysis file provides:
 - Difference in capacity MB
 
 <hr>
+
+## How to use:
+
+With PowerShell
+
+- Run localData.ps1 on VBR server, this will produced a local_data.json file
+- Put this file in the same directory as the cap_tier_report_no_local_scan.py
+- Run the above python script via powershell ./cap_ter...
+
+With local repo scan:
+
+- Update capacity_tier_report.py with the correct directory to scan (os.walk("f:/"):)
+- Run the script in powershell ./capacity_tier_report.py
+
+<hr>
+
+## Requirements
 
 The tool requires the following packages:
 
