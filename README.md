@@ -54,7 +54,7 @@ https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#co
 
 The tools requires access to the local repository. 
 
-I do not believe there is any charge for using Boto3 as it is a wrapper for the AWS CLI, however, please consult your AWS specialist before progressing.
+Running this tool will incur AWS charges, please consult the your AWS specialist stating that the List_Objects_v2 CLI command is being used with pagination up to the maximum of 1000 objects per-run.
 
 Note this is NOT a Veeam tool and has no association with Veeam.
 
