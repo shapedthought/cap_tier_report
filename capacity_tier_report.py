@@ -98,7 +98,7 @@ for job in cloud_jobs:
     j = list(filter(lambda x: x['Job'] == job, cloud_results))
 
     # calculate the new total capacity
-    new_cap = reduce((lambda x, y: x + y), [x['TotalBackupSizeGB'] for x in j])
+    new_cap = reduce((lambda x, y: x + y), [x['TotalBackupSizeMB'] for x in j])
 
     # Create new list of lists with the backups files
     all_files_list = [x['Files'] for x in j]
@@ -112,7 +112,7 @@ for job in cloud_jobs:
     new_data = {
         "Job": job,
         "Points": point_qty[0],
-        "TotalBackupSizeGB": new_cap,
+        "TotalBackupSizeMB": new_cap,
         "Files": flat_list
     }
     updated_cloud_results.append(new_data)
@@ -136,7 +136,7 @@ for i in local_results:
         if i['Job'] == j['Job']:
             job = i['Job']
             point_diff = j['Points'] - i['Points'] 
-            cap_diff = j['TotalBackupSizeGB'] - i['TotalBackupSizeGB']
+            cap_diff = j['TotalBackupSizeMB'] - i['TotalBackupSizeMB']
             points_text = f"Points difference {point_diff}"
             cap_text = f"Cloud capacity difference {cap_diff}"
             # print(i['Job'])
