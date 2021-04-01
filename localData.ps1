@@ -7,10 +7,10 @@ $results = @()
 
 foreach ($backup in $backups) {
     $storages = $backup.GetAllStorages()
-    $TotalBackupSizeGB = 0
+    $TotalBackupSizeMB = 0
     $files = @()
     foreach ($item in $storages) {
-        $TotalBackupSizeGB += $item.Stats.BackupSize / 1MB
+        $TotalBackupSizeMB += $item.Stats.BackupSize / 1MB
         if ([string]$item.FilePath -like "*\\*") {
             $bu_only = $item.FilePath.ToString().Split('\\')[-1]
             $files += $bu_only
