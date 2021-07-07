@@ -32,12 +32,14 @@ The Analysis file provides:
 With PowerShell
 
 - Run localData.ps1 on VBR server, this will produced a local_data.json file
+- Update the line with: pages = paginator.paginate(Bucket="veeamv11bucket") to the name of your bucket
 - Put this file in the same directory as the cap_tier_report_no_local_scan.py
 - Run the above python script via powershell ./cap_ter...
 
 With local repo scan:
 
 - Update capacity_tier_report.py with the correct directory to scan (os.walk("f:/"):)
+- Update the line with: pages = paginator.paginate(Bucket="veeamv11bucket") to the name of your bucket
 - Run the script in powershell ./capacity_tier_report.py
 
 <hr>
